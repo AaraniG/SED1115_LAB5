@@ -1,0 +1,43 @@
+from machine import Pin, I2C
+import time
+#Used to create an I2c object -> from lab 5 instruCtion document
+#Will create an I2C ("i SQUARED C") that uses I2C channel 1, and the SDA and SDL pins are GPIO14 and GPIO15 
+i2c = I2C(1, sda=Pin(14), scl=Pin(15))
+
+#I2C class has a scan method that can be use to scan the I2C bus for devices
+#It will return a list of addresses of all devices that are found on the I2C bus
+devices = i2c.scan()
+
+#Prints the addresses of the devices that are found on the I2C bus
+for d in devices:
+    print("0x{:02x}".format(d))
+    
+def read_time(i2c):
+    time_data = i2c.readfrom_mem(0x68, 0x00, 7)
+    return time_data
+
+try:
+    # Open or create a log file in append mode
+    log = open("log.txt", "a")
+    while True:
+        input("Press Enter to start counting...")
+        # Start counting 
+        start_time = time.ticks_ms() 
+        
+        input("Press Enter when you think 15 seconds have passed...")
+        
+        # Stop counting
+        end_time = time.ticks_ms()
+        
+        # Calculate the time taken
+        time_taken =  end_time - start_time # Calculate the time taken in milliseconds
+
+    # Log the time 
+    log.write("Time Taken: {} seconds\n".format(time_taken))
+    log.flush()# Flush the log to ensure it's written to the file
+
+
+
+finally:
+    log.close()# Close the log file
+
